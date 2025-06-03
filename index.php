@@ -1,4 +1,8 @@
-<?php require_once 'includes/header.php'; ?>
+<?php 
+require_once 'includes/header.php';
+require 'upsert_noticias.php';
+require 'connect.php';
+?>
 
 <div class="container">
 
@@ -12,6 +16,8 @@
 
             if ($destaques_ao_vivo && count($destaques_ao_vivo) > 0) {
                 foreach ($destaques_ao_vivo as $news_item_api) {
+                    // Roda a função de insert no banco
+                    insert_noticias($conexao_db, $news_item_api['title'], $news_item_api['description'], $news_item_api['content'], $news_item_api['url'], $news_item_api['image'], $news_item_api['publishedAt'], $news_item_api['source']['name'], $news_item_api['source']['url']);
                     // Adaptação dos campos para o formato da API GNews
                     $id_unico_destaque = md5($news_item_api['url'] ?? rand());
                     $title_api = isset($news_item_api['title']) ? htmlspecialchars($news_item_api['title']) : 'Título indisponível';
