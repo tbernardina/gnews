@@ -1,0 +1,719 @@
+/* Reset Básico e Configurações Globais */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== TEMA DE ALTO CONTRASTE ===== */
+body.high-contrast-theme {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+/* Links em Alto Contraste */
+body.high-contrast-theme a,
+body.high-contrast-theme a:visited {
+    color: #ffff00 !important; /* Amarelo brilhante */
+    text-decoration: underline !important; /* Sempre sublinhado para clareza */
+}
+body.high-contrast-theme a:hover,
+body.high-contrast-theme a:focus {
+    color: #000000 !important;
+    background-color: #ffff00 !important; /* Fundo amarelo no hover/focus */
+}
+
+/* Cabeçalho e Rodapé */
+body.high-contrast-theme .site-header,
+body.high-contrast-theme .site-footer {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+}
+body.high-contrast-theme .site-header .logo a,
+body.high-contrast-theme .main-navigation ul li a {
+    color: #ffff00 !important; /* Links no header */
+    background-color: transparent !important;
+}
+body.high-contrast-theme .main-navigation ul li a:hover,
+body.high-contrast-theme .main-navigation ul li a:focus {
+    color: #000000 !important;
+    background-color: #ffff00 !important;
+}
+
+
+/* Botões Gerais e Controles de Acessibilidade */
+body.high-contrast-theme button,
+body.high-contrast-theme .news-item .read-more,
+body.high-contrast-theme .search-page-form button,
+body.high-contrast-theme .pagination a,
+body.high-contrast-theme .pagination span,
+body.high-contrast-theme .accessibility-controls button {
+    background-color: #000000 !important;
+    color: #ffff00 !important;
+    border: 2px solid #ffff00 !important;
+    box-shadow: none !important;
+}
+body.high-contrast-theme button:hover,
+body.high-contrast-theme .news-item .read-more:hover,
+body.high-contrast-theme .search-page-form button:hover,
+body.high-contrast-theme .pagination a:hover,
+body.high-contrast-theme .accessibility-controls button:hover,
+body.high-contrast-theme button:focus,
+body.high-contrast-theme .news-item .read-more:focus,
+body.high-contrast-theme .search-page-form button:focus,
+body.high-contrast-theme .pagination a:focus,
+body.high-contrast-theme .accessibility-controls button:focus {
+    background-color: #ffff00 !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+}
+body.high-contrast-theme .accessibility-controls button:disabled,
+body.high-contrast-theme button:disabled { /* Botões desabilitados */
+    background-color: #333333 !important;
+    color: #888888 !important;
+    border-color: #888888 !important;
+    opacity: 0.7 !important;
+}
+
+
+/* Inputs de Formulário */
+body.high-contrast-theme input[type="search"],
+body.high-contrast-theme input[type="text"],
+body.high-contrast-theme textarea {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffff00 !important;
+}
+body.high-contrast-theme input[type="search"]::placeholder,
+body.high-contrast-theme input[type="text"]::placeholder,
+body.high-contrast-theme textarea::placeholder {
+    color: #bbbb00 !important; /* Placeholder amarelo mais escuro */
+}
+
+
+/* Títulos e Textos Principais */
+body.high-contrast-theme .page-title,
+body.high-contrast-theme .news-item h3,
+/* body.high-contrast-theme .news-item h3 a, Retirado pois links já são tratados globalmente */
+body.high-contrast-theme h1, body.high-contrast-theme h2, body.high-contrast-theme h3 {
+    color: #ffffff !important; /* Títulos em branco sobre fundo preto */
+}
+body.high-contrast-theme .news-item h3 a { /* Links de título de notícia específico, se precisar de algo diferente do global */
+     color: #ffff00 !important;
+}
+/* O :hover e :focus para .news-item h3 a já é coberto pelo global 'body.high-contrast-theme a:hover' */
+
+
+/* Cards de Notícias e Elementos Similares */
+body.high-contrast-theme .news-item,
+body.high-contrast-theme .carousel-section,
+body.high-contrast-theme .search-page-form {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+}
+body.high-contrast-theme .news-item .news-meta,
+body.high-contrast-theme .news-item .news-description {
+    color: #ffffff !important;
+}
+body.high-contrast-theme .news-item .news-meta .source {
+    color: #ffffff !important; /* Fonte também branca ou amarela */
+    font-weight: bold;
+}
+
+/* Imagens - podem precisar de um tratamento específico se ficarem ruins */
+body.high-contrast-theme img.news-image {
+    border: 1px solid #ffffff !important; /* LINHA CORRIGIDA E COMPLETADA */
+    /* filter: grayscale(100%) contrast(150%); */ /* Exemplo: para forçar mais contraste em imagens, opcional */
+}
+body.high-contrast-theme .placeholder-image {
+    background-color: #111111 !important;
+    color: #ffff00 !important;
+    border: 1px dashed #ffff00 !important;
+}
+
+/* Paginação */
+body.high-contrast-theme .pagination .current-page {
+    background-color: #ffff00 !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+}
+body.high-contrast-theme .pagination .disabled {
+    background-color: #222222 !important;
+    color: #777777 !important;
+    border-color: #777777 !important;
+}
+
+/* Outros elementos que podem precisar de ajustes */
+body.high-contrast-theme hr {
+    border-color: #ffffff !important;
+}
+/* FIM DA SEÇÃO DE TEMA DE ALTO CONTRASTE */
+
+
+/* INÍCIO DOS ESTILOS NORMAIS DA PÁGINA */
+html {
+    font-size: 100%; /* Base para unidades rem, geralmente 16px */
+    scroll-behavior: smooth; /* Rolagem suave para links internos */
+}
+
+body {
+    font-family: 'Roboto', 'Arial', sans-serif;
+    line-height: 1.6; /* Ajustado ligeiramente em relação ao 1.7 para corresponder ao CSS do usuário */
+    color: #333; /* Contraste bom com fundo branco */
+    background-color: #f4f4f4; /* Fundo levemente cinza */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Classes para controle de tamanho de fonte via JS */
+.font-size-normal { font-size: 100%; }
+.font-size-medium { font-size: 110%; }
+.font-size-large { font-size: 120%; }
+.font-size-xlarge { font-size: 130%; }
+
+
+/* Link "Pular para o Conteúdo" */
+.skip-link {
+    position: absolute;
+    top: -60px; /* Ajustado para garantir que saia completamente e tenha espaço para outline (era -40px) */
+    left: 0;
+    background: #003366; /* Cor mais escura para alto contraste (era #0056b3) */
+    color: white;
+    padding: 12px 18px; /* Aumentado para melhor clique (era 10px 15px) */
+    z-index: 10000;
+    text-decoration: none;
+    border-radius: 0 0 5px 5px;
+    font-weight: bold; /* Adicionado */
+    transition: top 0.3s ease; /* Adicionado */
+}
+
+.skip-link:focus {
+    top: 0; /* Torna visível ao focar */
+    outline: 3px solid #ffbf00; /* Outline amarelo vibrante (sugestão) */
+    outline-offset: 2px; /* Sugestão */
+}
+
+/* Classe para esconder visualmente mas manter acessível para leitores de tela */
+.visually-hidden {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap; /* Evita quebra de linha */
+}
+
+
+/* Estilos de Foco Globais - alta visibilidade (combinando com a sugestão anterior) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+    outline: 3px solid #0056b3;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4);
+}
+/* Fallback para navegadores que não suportam :focus-visible ou para manter consistência */
+a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:not([tabindex="-1"]):focus {
+    outline: 3px solid #0056b3; /* Mantém outline consistente */
+    outline-offset: 2px;
+}
+
+
+/* Container Principal */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem; /* 16px */
+}
+
+/* Cabeçalho */
+.site-header {
+    background-color: #004080; /* Azul escuro para bom contraste */
+    color: #fff;
+    padding: 1rem 0; /* 16px */
+    border-bottom: 3px solid #002a52;
+}
+
+.site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permite quebra de linha em telas menores */
+}
+
+.site-header .logo h1 {
+    font-size: 1.8rem; /* 28.8px */
+    margin: 0;
+    font-weight: 700;
+}
+.site-header .logo a {
+    color: #fff;
+    text-decoration: none;
+}
+
+
+.main-navigation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.main-navigation ul li {
+    margin-left: 1.25rem; /* 20px */
+}
+
+.main-navigation ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem; /* 17.6px */
+    padding: 0.6rem 0.8rem; /* Levemente ajustado para mais padding (era 0.5rem) */
+    border-radius: 4px;
+    font-weight: bold; /* Adicionado para destaque */
+}
+
+.main-navigation ul li a:hover,
+.main-navigation ul li a:focus { /* Unificado com o foco global */
+    background-color: #0056b3; /* Destaque no hover/focus */
+    text-decoration: underline; /* Sublinhado no hover/focus */
+    /* O outline global já trata o foco */
+}
+/* Específico para o foco dos links da navegação se precisar ser diferente */
+.main-navigation ul li a:focus-visible, .main-navigation ul li a:focus {
+    background-color: #0056b3;
+    outline: 3px solid #fff; /* Branco sobre fundo escuro é bom */
+    outline-offset: 1px;
+    box-shadow: none;
+}
+
+
+.search-container-header {
+    /* margin-top: 0.5rem; Espaçamento se quebrar linha - pode ser gerenciado por flex-wrap no container pai */
+    display: flex; /* Adicionado para alinhar input e botão */
+    margin-left: 1rem; /* Adicionado para espaçar da navegação */
+}
+.search-container-header input[type="search"] {
+    padding: 0.6rem; /* 9.6px */
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem; /* 16px */
+    min-width: 150px; /* Era 200px, ajustado */
+}
+.search-container-header button {
+    padding: 0.6rem 1rem; /* 9.6px 16px */
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+    border-left: none;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+    font-size: 1rem; /* 16px */
+}
+.search-container-header button:hover,
+.search-container-header button:focus { /* Unificado com o foco global */
+    background-color: #0056b3;
+    /* O outline global já trata o foco */
+}
+
+/* Controles de Acessibilidade no Header (estilos da sugestão anterior) */
+.accessibility-controls {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem; /* Espaçamento da navegação/busca */
+}
+.accessibility-controls button {
+    background-color: #fff;
+    color: #003366;
+    border: 2px solid #003366;
+    padding: 0.4rem 0.8rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.accessibility-controls button:hover {
+    background-color: #004080;
+    color: #fff;
+    text-decoration: none;
+}
+.accessibility-controls button:disabled {
+    background-color: #e0e0e0;
+    color: #999999;
+    border-color: #cccccc;
+    cursor: not-allowed;
+}
+
+
+/* Conteúdo Principal */
+main {
+    padding: 2rem 0; /* 32px */
+    flex-grow: 1; /* Faz o main crescer para empurrar o footer para baixo */
+}
+
+.page-title {
+    font-size: 2.2rem; /* Ligeiramente maior que 2rem */
+    margin-bottom: 1.5rem; /* 24px */
+    color: #003366; /* Cor mais escura que #004080 */
+    border-bottom: 2px solid #cccccc; /* Borda mais visível que #e0e0e0 */
+    padding-bottom: 0.5rem;
+}
+
+/* Carrossel de Notícias */
+.carousel-section {
+    margin-bottom: 2.5rem; /* 40px */
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.carousel-section h2 {
+    font-size: 1.6rem; /* 25.6px */
+    margin-bottom: 1rem; /* 16px */
+    color: #0056b3;
+}
+.carousel-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; /* 24px */
+}
+
+
+/* Lista de Notícias (Grid) */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Layout responsivo */
+    gap: 1.5rem; /* 24px */
+}
+
+.news-item {
+    background-color: #fff;
+    border: 1px solid #ccc; /* Era #ddd, mais visível */
+    border-radius: 8px;
+    overflow: hidden; /* Para conter a imagem */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Era 0.05 */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.news-item:hover,
+.news-item:focus-within { /* Estilo quando um elemento dentro está focado */
+    transform: translateY(-5px);
+    box-shadow: 0 5px 18px rgba(0,0,0,0.15); /* Era 0 4px 15px rgba(0,0,0,0.1) */
+    border-color: #0056b3; /* Adicionado para destacar a borda */
+}
+
+
+.news-item img.news-image, /* Combinado com placeholder */
+.news-item .placeholder-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
+    border-bottom: 1px solid #ddd; /* Era #eee, mais visível */
+}
+.news-item .placeholder-image { /* Estilo específico para placeholder se não houver imagem */
+    background-color: #e9e9e9; /* Era #e0e0e0, ajustado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555; /* Era #777, mais escuro */
+    font-style: italic;
+    font-weight: bold; /* Adicionado */
+}
+
+
+.news-content {
+    padding: 1.25rem; /* Era 1rem, mais padding */
+    flex-grow: 1; /* Faz o conteúdo crescer */
+    display: flex;
+    flex-direction: column;
+}
+
+.news-item h3 {
+    font-size: 1.4rem; /* Era 1.3rem, maior */
+    margin-bottom: 0.75rem; /* Era 0.5rem, mais espaço */
+    line-height: 1.4; /* Adicionado */
+}
+.news-item h3 a {
+    color: #0056b3;
+    text-decoration: none;
+}
+.news-item h3 a:hover,
+.news-item h3 a:focus { /* Unificado com o foco global */
+    text-decoration: underline;
+    color: #003366;
+    /* O outline global já trata o foco, mas pode ser específico se necessário */
+}
+.news-item h3 a:focus-visible, .news-item h3 a:focus {
+    outline: 2px solid #0056b3; /* Mais sutil que o global aqui */
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+
+.news-item .news-meta {
+    font-size: 0.9rem; /* Era 0.85rem, maior */
+    color: #444; /* Era #666, mais escuro */
+    margin-bottom: 0.75rem; /* 12px */
+}
+.news-item .news-meta .source {
+    font-weight: bold;
+    color: #222; /* Adicionado para dar mais destaque à fonte */
+}
+
+.news-item .news-description {
+    font-size: 1rem; /* Era 0.95rem, padrão */
+    margin-bottom: 1.25rem; /* Era 1rem, mais espaço */
+    flex-grow: 1; /* Permite que a descrição preencha o espaço */
+    color: #212121; /* Era #444, cor do body */
+    line-height: 1.7; /* Adicionado */
+}
+
+.news-item .read-more {
+    display: inline-block;
+    padding: 0.6rem 1.2rem; /* Era 0.5rem 1rem, mais padding */
+    background-color: #0056b3; /* Era #007bff, mais escuro */
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.95rem; /* Era 0.9rem, maior */
+    font-weight: bold; /* Adicionado */
+    text-align: center;
+    margin-top: auto; /* Empurra para o final do card */
+    border: 2px solid transparent; /* Adicionado para transição */
+}
+.news-item .read-more:hover,
+.news-item .read-more:focus { /* Unificado com o foco global */
+    background-color: #003366; /* Era #0056b3, mais escuro */
+    text-decoration: underline; /* Adicionado */
+    /* O outline global já trata o foco */
+}
+
+/* Rodapé */
+.site-footer {
+    background-color: #212121; /* Era #333, mais escuro */
+    color: #e0e0e0; /* Era #ccc, mais claro */
+    padding: 2rem 0; /* Era 1.5rem, mais padding */
+    text-align: center;
+    font-size: 0.95rem; /* Era 0.9rem, maior */
+    margin-top: auto; /* Garante que o rodapé fique no final se o conteúdo for pequeno */
+}
+.site-footer p {
+    margin-bottom: 0.5rem; /* 8px */
+}
+.site-footer a {
+    color: #82cfff; /* Era #7fdbff, mais vibrante */
+    text-decoration: none;
+    font-weight: bold; /* Adicionado */
+}
+.site-footer a:hover,
+.site-footer a:focus { /* Unificado com o foco global */
+    text-decoration: underline;
+    color: #abe0ff; /* Adicionado para clarear no hover */
+    /* O outline global já trata o foco, mas pode ser específico */
+}
+.site-footer a:focus-visible, .site-footer a:focus {
+     outline: 2px solid #ffbf00; /* Amarelo para links no rodapé escuro */
+     outline-offset: 1px;
+     box-shadow: none;
+}
+
+
+/* Paginação (se implementada) */
+.pagination {
+    margin-top: 2.5rem; /* Era 2rem, mais espaço */
+    text-align: center;
+}
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 0.6rem 1.1rem; /* Era 0.5rem 1rem, mais padding */
+    margin: 0 0.3rem; /* Era 0.25rem, mais margem */
+    border: 2px solid #0056b3; /* Era 1px #ddd, mais proeminente */
+    text-decoration: none;
+    color: #0056b3; /* Era #007bff */
+    border-radius: 4px;
+    font-weight: bold; /* Adicionado */
+}
+.pagination a:hover, .pagination a:focus { /* Unificado com o foco global */
+    background-color: #0056b3; /* Era #007bff */
+    color: white;
+    text-decoration: underline; /* Adicionado */
+    /* O outline global já trata o foco */
+}
+.pagination .current-page {
+    background-color: #0056b3; /* Era #007bff */
+    color: white;
+    border-color: #0056b3; /* Era #007bff */
+    font-weight: bold;
+}
+.pagination .disabled {
+    color: #757575; /* Era #aaa, mais escuro */
+    pointer-events: none;
+    background-color: #e0e0e0; /* Adicionado */
+    border-color: #bdbdbd; /* Era #eee, mais escuro */
+}
+
+
+/* Estilos para formulário de busca na página de busca */
+.search-page-form {
+    margin-bottom: 2rem; /* 32px */
+    background-color: #fff;
+    padding: 2rem; /* Era 1.5rem, mais padding */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #ccc; /* Adicionado */
+}
+.search-page-form label {
+    display: block;
+    margin-bottom: 0.75rem; /* Era 0.5rem, mais margem */
+    font-weight: bold;
+    font-size: 1.2rem; /* Era 1.1rem, maior */
+    color: #212121; /* Era #333, cor do body */
+}
+.search-page-form input[type="search"] {
+    width: 100%;
+    padding: 0.85rem; /* Era 0.75rem, maior */
+    font-size: 1.1rem; /* 17.6px */
+    border: 2px solid #aaa; /* Era 1px #ccc, mais espessa */
+    border-radius: 4px;
+    margin-bottom: 1rem; /* 16px */
+}
+.search-page-form input[type="search"]:focus-visible,
+.search-page-form input[type="search"]:focus { /* Unificado com o foco global */
+     border-color: #0056b3;
+     /* O outline e box-shadow globais já tratam o foco */
+}
+.search-page-form button {
+    padding: 0.85rem 1.8rem; /* Era 0.75rem 1.5rem, maior */
+    font-size: 1.1rem; /* 17.6px */
+    font-weight: bold; /* Adicionado */
+    background-color: #0056b3; /* Era #007bff */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.search-page-form button:hover,
+.search-page-form button:focus { /* Unificado com o foco global */
+    background-color: #003366; /* Era #0056b3 */
+    text-decoration: underline; /* Adicionado */
+    /* O outline global já trata o foco */
+}
+
+.no-results {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #444; /* Era #555, mais escuro */
+    padding: 2.5rem; /* Era 2rem, mais padding */
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px dashed #bbb; /* Era #ddd, mais visível */
+}
+
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+    body {
+        line-height: 1.65; /* Ajuste fino para telas menores */
+    }
+    .site-header .container {
+        flex-direction: column;
+        align-items: flex-start; /* Alinha itens à esquerda */
+    }
+    .logo { margin-bottom: 1rem; } /* Adicionado */
+
+    .main-navigation {
+        order: 2; /* Ordem na flexbox */
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    .main-navigation ul {
+        flex-direction: column;
+        width: 100%;
+    }
+    .main-navigation ul li {
+        margin-left: 0;
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    .main-navigation ul li a {
+        display: block; /* Ocupa toda a largura */
+        padding: 0.8rem; /* Mais área de toque */
+        text-align: left;
+    }
+
+    /* Controles de acessibilidade em telas menores */
+    .accessibility-controls {
+        order: 1; /* Coloca no topo em mobile, se desejado */
+        margin-left: auto; /* Tenta alinhar à direita */
+        margin-bottom: 1rem; /* Espaço antes da navegação */
+    }
+    .accessibility-controls button { /* Ajustes para mobile */
+        padding: 0.3rem 0.6rem;
+        font-size: 0.9rem;
+    }
+
+
+    .search-container-header { /* Busca no header em mobile */
+        order: 3; /* Ordem na flexbox */
+        width: 100%;
+        margin-top: 1rem;
+        margin-left: 0; /* Reseta margem */
+        display: flex; /* Garante alinhamento */
+    }
+    .search-container-header input[type="search"] {
+        /* width: calc(100% - 90px); Removido para usar flex-grow */
+        flex-grow: 1; /* Input ocupa espaço */
+        min-width: 0; /* Permite encolher */
+        font-size: 1rem; /* Ajustado */
+    }
+     .search-container-header button {
+        padding: 0.6rem 0.8rem; /* Ajustado */
+        font-size: 1rem; /* Ajustado */
+        flex-shrink: 0; /* Botão não encolhe */
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+        gap: 1.5rem; /* Reduz gap em telas menores */
+    }
+    .carousel-container {
+         grid-template-columns: 1fr;
+    }
+
+    .page-title {
+        font-size: 1.8rem; /* Ajusta para telas menores */
+    }
+    .news-item h3 {
+        font-size: 1.25rem; /* Ajusta para telas menores */
+    }
+    .news-item .news-description {
+        font-size: 0.95rem; /* Ajusta para telas menores */
+    }
+}
+
+@media (max-width: 480px) { /* Ajustes ainda menores */
+    .accessibility-controls {
+        width: 100%;
+        justify-content: center; /* Centraliza botões se ocuparem toda a largura */
+        margin-left: 0;
+    }
+    .accessibility-controls button {
+        flex-grow: 1; /* Para distribuir espaço se houver poucos botões */
+        margin-left: 0.2rem;
+        margin-right: 0.2rem;
+    }
+    .accessibility-controls button:first-child { margin-left: 0; }
+    .accessibility-controls button:last-child { margin-right: 0; }
+}
