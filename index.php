@@ -1,13 +1,11 @@
 <?php 
 require_once 'includes/header.php';
-require 'upsert_noticias.php';
-require 'connect.php';
 ?>
 
 <div class="container">
 
     <section class="carousel-section" aria-labelledby="carousel-heading">
-        <h2 id="carousel-heading">Notícias em Destaque (Ao Vivo da API)</h2>
+        <h2 id="carousel-heading">Notícias em Destaque (Ao Vivo)</h2>
         <div class="carousel-container">
             <?php
             // ANTES: $carousel_news = getNewsFromDB($conn, 3, 0, null, 'pt');
@@ -17,7 +15,7 @@ require 'connect.php';
             if ($destaques_ao_vivo && count($destaques_ao_vivo) > 0) {
                 foreach ($destaques_ao_vivo as $news_item_api) {
                     // Roda a função de insert no banco
-                    insert_noticias($conexao_db, $news_item_api['title'], $news_item_api['description'], $news_item_api['content'], $news_item_api['url'], $news_item_api['image'], $news_item_api['publishedAt'], $news_item_api['source']['name'], $news_item_api['source']['url']);
+                    insert_noticias($conn, $news_item_api['title'], $news_item_api['description'], $news_item_api['content'], $news_item_api['url'], $news_item_api['image'], $news_item_api['publishedAt'], $news_item_api['source']['name'], $news_item_api['source']['url']);
                     // Adaptação dos campos para o formato da API GNews
                     $id_unico_destaque = md5($news_item_api['url'] ?? rand());
                     $title_api = isset($news_item_api['title']) ? htmlspecialchars($news_item_api['title']) : 'Título indisponível';
@@ -73,7 +71,7 @@ require 'connect.php';
     <hr style="margin: 2rem 0;">
 
     <section class="general-news" aria-labelledby="general-news-heading">
-        <h2 id="general-news-heading" class="page-title">Últimas Notícias (do Banco de Dados)</h2>
+        <h2 id="general-news-heading" class="page-title">Últimas Notícias</h2>
         <div class="news-grid">
             <?php
             // Esta seção continua buscando do banco de dados como antes
@@ -115,6 +113,7 @@ require 'connect.php';
             } else {
                  echo "<p>Nenhuma notícia encontrada no banco de dados. Tente atualizar as notícias através do script apropriado.</p>";
             }
+            insert_feedback($conn, 64, 5);
             ?>
         </div>
         </section>

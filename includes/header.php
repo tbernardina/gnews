@@ -21,10 +21,16 @@ require_once 'includes/functions.php'; // Inclui as funções
     <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
 
     <header class="site-header" role="banner">
+        <div class="accessibility-controls">
+            <button id="decrease-font" aria-label="Diminuir tamanho da fonte" title="Diminuir tamanho da fonte">A-</button>
+            <button id="reset-font" aria-label="Restaurar tamanho da fonte padrão" title="Restaurar tamanho da fonte padrão">A</button>
+            <button id="increase-font" aria-label="Aumentar tamanho da fonte" title="Aumentar tamanho da fonte">A+</button>
+            <button id="toggle-contrast" aria-label="Alternar esquema de contraste" title="Alternar esquema de contraste">Contraste</button> <?php // Novo botão de contraste ?>
+        </div>
         <div class="container">
             <div class="logo">
                 <a href="index.php" aria-label="Página Inicial do Portal de Notícias Acessível">
-                    <h1>Portal NotíciasJá</h1>
+                    <h1>Portal Notícias Já</h1>
                 </a>
             </div>
             <nav class="main-navigation" aria-label="Navegação principal">
@@ -32,7 +38,7 @@ require_once 'includes/functions.php'; // Inclui as funções
             <nav class="main-navigation" aria-label="Navegação principal">
     <ul>
         <li><a href="index.php">Início</a></li>
-        <li><a href="search.php">Buscar Notícias (BD)</a></li> <li><a href="noticias_ao_vivo.php">Notícias Ao Vivo (API)</a></li> </ul>
+        <li><a href="search.php">Buscar Notícias</a></li> <li><a href="noticias_ao_vivo.php">Notícias Ao Vivo</a></li> </ul>
 </nav>
 
             <div class="search-container-header">
@@ -45,14 +51,5 @@ require_once 'includes/functions.php'; // Inclui as funções
                 </form>
             </div>
         </div>
-
-<div class="accessibility-controls">
-    <button id="decrease-font" aria-label="Diminuir tamanho da fonte" title="Diminuir tamanho da fonte">A-</button>
-    <button id="reset-font" aria-label="Restaurar tamanho da fonte padrão" title="Restaurar tamanho da fonte padrão">A</button>
-    <button id="increase-font" aria-label="Aumentar tamanho da fonte" title="Aumentar tamanho da fonte">A+</button>
-    <button id="toggle-contrast" aria-label="Alternar esquema de contraste" title="Alternar esquema de contraste">Contraste</button> <?php // Novo botão de contraste ?>
-</div>
-
     </header>
-
     <main id="main-content" role="main">

@@ -1,6 +1,5 @@
 <?php
 // PÁGINA DE FUNÇÃO PARA INSERT DAS NOTICIAS DO GNEWS AO BANCO DE DADOS LOCAL
-require 'connect.php';
 
 // Valores que você quer inserir/atualizar
 function insert_noticias($conexao, $titulo, $descricao, $content, $url_db, $image_url_db, $published_at_db, $source_name_db, $source_url_db){

@@ -299,7 +299,10 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:not
 .search-container-header {
     /* margin-top: 0.5rem; Espaçamento se quebrar linha - pode ser gerenciado por flex-wrap no container pai */
     display: flex; /* Adicionado para alinhar input e botão */
-    margin-left: 1rem; /* Adicionado para espaçar da navegação */
+    /* Adicionado para espaçar da navegação */
+    margin-left: 6rem; 
+    margin-top: 1rem;
+
 }
 .search-container-header input[type="search"] {
     padding: 0.6rem; /* 9.6px */
@@ -327,8 +330,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:not
 /* Controles de Acessibilidade no Header (estilos da sugestão anterior) */
 .accessibility-controls {
     display: flex;
-    align-items: center;
-    margin-left: 1rem; /* Espaçamento da navegação/busca */
+    align-items: center; /* Espaçamento da navegação/busca */
 }
 .accessibility-controls button {
     background-color: #fff;

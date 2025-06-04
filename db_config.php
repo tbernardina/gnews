@@ -14,23 +14,4 @@ if ($conn->connect_error) {
 
 // Define o charset para UTF-8
 $conn->set_charset("utf8mb4");
-
-// Script para criar a tabela (execute uma vez ou verifique se já existe)
-/*
-CREATE TABLE IF NOT EXISTS noticias (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    content TEXT,
-    url VARCHAR(255) UNIQUE,
-    image_url VARCHAR(255),
-    published_at DATETIME,
-    source_name VARCHAR(100),
-    source_url VARCHAR(255),
-    fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    lang VARCHAR(10) DEFAULT 'pt'
-);
-CREATE INDEX idx_published_at ON noticias (published_at);
-CREATE INDEX idx_lang ON noticias (lang);
-*/
 ?>

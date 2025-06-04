@@ -10,7 +10,7 @@ require_once 'includes/header.php'; // Garante que functions.php (com API Key e 
             <form action="noticias_ao_vivo.php" method="GET" class="search-page-form" role="search">
                 <label for="q_live">Buscar notícias ao vivo por termo:</label>
                 <input type="search" id="q_live" name="q" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>" placeholder="Ex: tecnologia, Brasil, eleições...">
-                <button type="submit">Buscar na API</button>
+                <button type="submit">Buscar</button>
             </form>
             <hr style="margin: 1.5rem 0;">
 
@@ -18,9 +18,9 @@ require_once 'includes/header.php'; // Garante que functions.php (com API Key e 
             $termo_busca_live = null;
             if (isset($_GET['q']) && !empty(trim($_GET['q']))) {
                 $termo_busca_live = trim($_GET['q']);
-                echo "<h3>Resultados da API para: \"" . htmlspecialchars($termo_busca_live) . "\"</h3><br>";
+                echo "<h3>Resultados para: \"" . htmlspecialchars($termo_busca_live) . "\"</h3><br>";
             } else {
-                echo "<h3>Principais Notícias da API no momento:</h3><br>";
+                echo "<h3>Principais Notícias no momento:</h3><br>";
             }
 
             $idioma_live = 'pt';
@@ -43,6 +43,8 @@ require_once 'includes/header.php'; // Garante que functions.php (com API Key e 
                 echo '<div class="news-grid">'; // Reutilizar a classe de grid
 
                 foreach ($live_articles as $article) {
+                    // Roda a função de insert no banco
+                    insert_noticias($conn, $article['title'], $article['description'], $article['content'], $article['url'], $article['image'], $article['publishedAt'], $article['source']['name'], $article['source']['url']);
                     // Adaptação e exibição dos campos da API
                     $title = isset($article['title']) ? htmlspecialchars($article['title']) : 'Título indisponível';
                     $description = isset($article['description']) ? htmlspecialchars($article['description']) : 'Descrição indisponível.';

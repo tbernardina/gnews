@@ -1,7 +1,7 @@
 <?php
 // ***** COLOQUE SUA CHAVE REAL E VÁLIDA DA GNEWS AQUI ABAIXO *****
 define('GNEWS_API_KEY', '73f3f083fbbb3f59b35d65f37eb86444'); // <--- SUBSTITUA ISTO!
-
+require_once 'untils.php';
 /**
  * Busca notícias da API GNews.
  * @param string $query Termo de busca (opcional)
@@ -129,6 +129,38 @@ function saveArticleToDB(mysqli $conn, array $article, string $lang = 'pt') {
     }
 }
 
+function insert_feedback($conexao, $id_noticia, $nota){
+    $noticias_id   = $id_noticia;
+    $nota_feedback = $nota;
+    $ip_user       = getClientIp();
+
+    $sql2 = "CALL inserir_feedback(?, ?, ?)";
+    $stmt2 = $conexao->prepare($sql2);
+
+    if ( ! $stmt2 ) {
+        die("Falha ao preparar inserir_feedback: ({$conexao->errno}) {$conexao->error}");
+    }
+
+    // Bind: 3 inteiros e 1 string (ip_user)
+    $stmt2->bind_param(
+        "iis",
+        $noticias_id,
+        $nota_feedback,
+        $ip_user
+    );
+
+    if ( ! $stmt2->execute() ) {
+        echo "Erro ao executar inserir_feedback: ({$stmt2->errno}) {$stmt2->error}";
+    } else {
+        echo "Feedback inserido com sucesso!";
+    }
+
+    $stmt2->close();
+
+    // 8. Fecha a conexão
+    $conexao->close();
+}
+
 /**
  * Busca notícias do banco de dados. (VERSÃO CORRIGIDA COM ...$params)
  * (Função como fornecida e corrigida anteriormente)
@@ -174,6 +206,47 @@ function getNewsFromDB(mysqli $conn, int $limit = 10, int $offset = 0, string $s
     }
     $stmt->close();
     return $noticias;
+}
+
+// Valores que você quer inserir/atualizar
+function insert_noticias($conexao, $titulo, $descricao, $content, $url_db, $image_url_db, $published_at_db, $source_name_db, $source_url_db){
+    $title        = $titulo;
+    $description  = $descricao;
+    $content      = $content;
+    $url          = $url_db;
+    $image_url    = $image_url_db;
+    $published_at = $published_at_db;
+    $source_name  = $source_name_db;
+    $source_url   = $source_url_db;
+
+    // Prepara a chamada à stored procedure (8 parâmetros IN)
+    $sql = "CALL upsert_noticia(?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conexao->prepare($sql);
+
+    if ( ! $stmt ) {
+        die("Falha ao preparar a query: ({$conexao->errno}) {$conexao->error}");
+    }
+
+    // SETANDO TODOS OS PARAMETROS DA FUNÇÃO "s" = string, todas as variaveis são strings
+    $stmt->bind_param(
+        "ssssssss",
+        $title,
+        $description,
+        $content,
+        $url,
+        $image_url,
+        $published_at,
+        $source_name,
+        $source_url,
+    );
+
+    // Executa a procedure
+    if ( ! $stmt->execute() ) {
+        echo "Erro ao executar upsert_noticia: ({$stmt->errno}) {$stmt->error}";
+    }
+
+    // Fecha statement e libera resultados pendentes (caso a procedure retorne algo)
+    $stmt->close();
 }
 
 /**
