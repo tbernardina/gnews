@@ -269,4 +269,119 @@ function formatDate(string $dateString): string {
 function generateAltText(string $title): string {
     return "Imagem relacionada à notícia: " . htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 }
-?>
+
+/**
+ * Busca notícias ordenadas por média de avaliação
+ * @param mysqli $conn Conexão com o banco de dados
+ * @param int $limit Número máximo de notícias a retornar
+ * @param int $min_feedbacks Número mínimo de avaliações que a notícia deve ter
+ * @return array Array de notícias com suas estatísticas
+ */
+function getNewsRanking(mysqli $conn, int $limit = 25, int $min_feedbacks = 1) {
+    $ranking_query = "
+        SELECT 
+            n.id,
+            n.title,
+            n.description,
+            n.url,
+            n.image_url,
+            n.published_at,
+            n.source_name,
+            AVG(f.NOTA_FEEDBACK) as media_nota,
+            COUNT(f.NOTA_FEEDBACK) as total_avaliacoes
+        FROM noticias n
+        INNER JOIN feedbacks f ON n.id = f.NOTICIAS_ID
+        GROUP BY n.id, n.title, n.description, n.url, n.image_url, n.published_at, n.source_name
+        HAVING COUNT(f.NOTA_FEEDBACK) >= ?
+        ORDER BY media_nota DESC, total_avaliacoes DESC
+        LIMIT ?
+    ";
+    
+    $stmt = $conn->prepare($ranking_query);
+    if (!$stmt) {
+        error_log("Erro ao preparar consulta de ranking: " . $conn->error);
+        return [];
+    }
+    
+    $stmt->bind_param("ii", $min_feedbacks, $limit);
+    
+    if (!$stmt->execute()) {
+        error_log("Erro ao executar consulta de ranking: " . $stmt->error);
+        $stmt->close();
+        return [];
+    }
+    
+    $result = $stmt->get_result();
+    $ranking = [];
+    
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $ranking[] = $row;
+        }
+    } else {
+        error_log("Erro ao obter resultado da consulta de ranking: " . $stmt->error);
+    }
+    
+    $stmt->close();
+    return $ranking;
+}
+
+/**
+ * Busca feedbacks com comentários para uma notícia específica
+ * @param mysqli $conn Conexão com o banco de dados
+ * @param string $url URL da notícia
+ * @return array Array de feedbacks com comentários
+ */
+function getFeedbacksWithComments(mysqli $conn, string $url) {
+    // Primeiro, buscar o ID da notícia pela URL
+    $id_noticia = select_id_url($conn, $url);
+    
+    if (!$id_noticia) {
+        return [];
+    }
+    
+    $feedback_query = "
+        SELECT 
+            f.NOTA_FEEDBACK,
+            f.COMENTARIO,
+            f.IP_USER,
+            n.title,
+            n.url,
+            n.published_at
+        FROM feedbacks f
+        INNER JOIN noticias n ON f.NOTICIAS_ID = n.id
+        WHERE f.NOTICIAS_ID = ? 
+        AND f.COMENTARIO IS NOT NULL 
+        AND TRIM(f.COMENTARIO) != ''
+        ORDER BY f.NOTA_FEEDBACK DESC
+    ";
+    
+    $stmt = $conn->prepare($feedback_query);
+    if (!$stmt) {
+        error_log("Erro ao preparar consulta de feedbacks: " . $conn->error);
+        return [];
+    }
+    
+    $stmt->bind_param("i", $id_noticia);
+    
+    if (!$stmt->execute()) {
+        error_log("Erro ao executar consulta de feedbacks: " . $stmt->error);
+        $stmt->close();
+        return [];
+    }
+    
+    $result = $stmt->get_result();
+    $feedbacks = [];
+    
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $feedbacks[] = $row;
+        }
+    } else {
+        error_log("Erro ao obter resultado da consulta de feedbacks: " . $stmt->error);
+    }
+    
+    $stmt->close();
+    return $feedbacks;
+}
+

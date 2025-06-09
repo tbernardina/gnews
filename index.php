@@ -181,7 +181,7 @@ require_once __DIR__ . '/includes/header.php';
         
         <div class="news-grid">
             <?php
-            $general_news = getNewsFromDB($conn, 9, 0, null, 'pt');
+            $general_news = getNewsFromDB($conn, 9, 0, null, 'pt', 1);
             if (!empty($general_news)):
                 foreach ($general_news as $news_item):
                     $id_db        = $news_item['id'];

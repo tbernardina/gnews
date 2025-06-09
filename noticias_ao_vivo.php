@@ -164,7 +164,7 @@ require_once __DIR__ . '/includes/header.php';
                                 <span aria-hidden="true">🔊</span>
                             </button>
                             
-                            <form action="feedback.php" method="get">
+                            <form action="feedback.php" method="post">
                                 <input type="hidden" name="url" value="<?= $url ?>">
                                 <input type="hidden" name="title" value="<?= $title ?>">
                                 <input type="submit" value="Avaliar">
