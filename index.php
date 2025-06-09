@@ -1,123 +1,276 @@
 <?php 
-require_once 'includes/header.php';
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container">
-
-    <section class="carousel-section" aria-labelledby="carousel-heading">
-        <h2 id="carousel-heading">Notícias em Destaque (Ao Vivo)</h2>
-        <div class="carousel-container">
-            <?php
-            // ANTES: $carousel_news = getNewsFromDB($conn, 3, 0, null, 'pt');
-            // AGORA: Buscar 3 notícias de destaque diretamente da API GNews
-            $destaques_ao_vivo = fetchArticlesFromGNews(null, 'pt', 3); // (termo=null, lang='pt', max=3)
-
-            if ($destaques_ao_vivo && count($destaques_ao_vivo) > 0) {
-                foreach ($destaques_ao_vivo as $news_item_api) {
-                    // Roda a função de insert no banco
-                    insert_noticias($conn, $news_item_api['title'], $news_item_api['description'], $news_item_api['content'], $news_item_api['url'], $news_item_api['image'], $news_item_api['publishedAt'], $news_item_api['source']['name'], $news_item_api['source']['url']);
-                    // Adaptação dos campos para o formato da API GNews
-                    $id_unico_destaque = md5($news_item_api['url'] ?? rand());
-                    $title_api = isset($news_item_api['title']) ? htmlspecialchars($news_item_api['title']) : 'Título indisponível';
-                    $url_api = isset($news_item_api['url']) ? htmlspecialchars($news_item_api['url']) : '#';
-                    $imageUrl_api = isset($news_item_api['image']) ? htmlspecialchars($news_item_api['image']) : '';
-                    $sourceName_api = isset($news_item_api['source']['name']) ? htmlspecialchars($news_item_api['source']['name']) : 'Fonte desconhecida';
-                    $publishedAtOriginal_api = $news_item_api['publishedAt'] ?? '';
-                    $publishedAt_api = isset($news_item_api['publishedAt']) ? formatDate($news_item_api['publishedAt']) : 'Data indisponível';
-                    $altText_api = generateAltText($news_item_api['title'] ?? 'Notícia Destaque');
-                    $description_api = isset($news_item_api['description']) ? htmlspecialchars($news_item_api['description']) : 'Descrição indisponível.';
-                    if (mb_strlen($description_api, 'UTF-8') > 120) { // Limitar descrição
-                        $description_api = mb_substr($description_api, 0, 117, 'UTF-8') . "...";
-                    }
-            ?>
-                    <article class="news-item" aria-labelledby="news-title-destaque-<?php echo $id_unico_destaque; ?>">
-                        <?php if (!empty($imageUrl_api)): ?>
-                            <img src="<?php echo $imageUrl_api; ?>"
-                                 alt="<?php echo $altText_api; ?>" class="news-image">
-                        <?php else: ?>
-                            <div class="news-image placeholder-image" role="img" aria-label="Imagem não disponível">
-                                <span>Sem Imagem</span>
-                            </div>
-                        <?php endif; ?>
-                        <div class="news-content">
-                            <h3 id="news-title-destaque-<?php echo $id_unico_destaque; ?>">
-                                <a href="<?php echo $url_api; ?>" target="_blank" rel="noopener noreferrer">
-                                    <?php echo $title_api; ?>
-                                </a>
-                            </h3>
-                            <p class="news-meta">
-                                <span class="source"><?php echo $sourceName_api; ?></span> -
-                                <time datetime="<?php echo $publishedAtOriginal_api; ?>">
-                                    <?php echo $publishedAt_api; ?>
-                                </time>
-                            </p>
-                            <p class="news-description">
-                                <?php echo $description_api; ?>
-                            </p>
-                            <a href="<?php echo $url_api; ?>" target="_blank" rel="noopener noreferrer" class="read-more">
-                                Ler mais <span class="visually-hidden"> sobre <?php echo $title_api; ?></span>
-                            </a>
-                        </div>
-                    </article>
-            <?php
-                }
-            } else {
-                echo "<p>Nenhuma notícia em destaque disponível no momento (API). Verifique sua chave API ou tente mais tarde.</p>";
-            }
-            ?>
+    <!-- Banner de destaque -->
+    <section class="hero-section" aria-labelledby="hero-heading">
+        <div class="hero-content">
+            <h2 id="hero-heading" class="hero-title">Notícias que importam, acessíveis para todos</h2>
+            <p class="hero-subtitle" style="margin: 10px">Fique por dentro dos acontecimentos mais recentes com nosso portal de notícias totalmente acessível</p>
         </div>
     </section>
 
-    <hr style="margin: 2rem 0;">
-
-    <section class="general-news" aria-labelledby="general-news-heading">
-        <h2 id="general-news-heading" class="page-title">Últimas Notícias</h2>
-        <div class="news-grid">
-            <?php
-            // Esta seção continua buscando do banco de dados como antes
-            $general_news = getNewsFromDB($conn, 9, 0, null, 'pt'); // Pega 9 notícias do BD (ajuste o offset se os destaques eram do BD antes)
-            if (!empty($general_news)) {
-                foreach ($general_news as $news_item) { // Usando $news_item (original) para não confundir
-            ?>
-                    <article class="news-item" aria-labelledby="news-title-db-<?php echo $news_item['id']; ?>">
-                        <?php if (!empty($news_item['image_url'])): ?>
-                            <img src="<?php echo htmlspecialchars($news_item['image_url']); ?>"
-                                 alt="<?php echo generateAltText($news_item['title']); ?>" class="news-image">
+    <!-- Seção de Destaques como Carrossel -->
+    <section class="carousel-section" aria-labelledby="carousel-heading">
+        <h2 id="carousel-heading">
+            <span class="section-icon" aria-hidden="true">🔥</span>
+            Notícias em Destaque
+        </h2>
+        <div class="carousel-wrapper">
+            <div class="carousel-container">
+                <?php
+                $destaques_ao_vivo = fetchArticlesFromGNews(null, 'pt', 3);
+                if ($destaques_ao_vivo && count($destaques_ao_vivo) > 0):
+                    foreach ($destaques_ao_vivo as $news_item_api):
+                        // Grava no banco (evita duplicatas)
+                        insert_noticias(
+                            $conn,
+                            $news_item_api['title'],
+                            $news_item_api['description'],
+                            $news_item_api['content'],
+                            $news_item_api['url'],
+                            $news_item_api['image'],
+                            $news_item_api['publishedAt'],
+                            $news_item_api['source']['name'],
+                            $news_item_api['source']['url']
+                        );
+                        
+                        // Preparação de variáveis para exibição
+                        $id_unico_destaque      = md5($news_item_api['url'] ?? rand());
+                        $title_api              = htmlspecialchars($news_item_api['title'] ?? 'Título indisponível', ENT_QUOTES, 'UTF-8');
+                        $url_api                = htmlspecialchars($news_item_api['url'] ?? '#', ENT_QUOTES, 'UTF-8');
+                        $imageUrl_api           = htmlspecialchars($news_item_api['image'] ?? '', ENT_QUOTES, 'UTF-8');
+                        $sourceName_api         = htmlspecialchars($news_item_api['source']['name'] ?? 'Fonte desconhecida', ENT_QUOTES, 'UTF-8');
+                        $publishedAtOriginal_api= $news_item_api['publishedAt'] ?? '';
+                        $publishedAt_api        = $publishedAtOriginal_api 
+                                                   ? formatDate($publishedAtOriginal_api) 
+                                                   : 'Data indisponível';
+                        $altText_api            = generateAltText($news_item_api['title'] ?? '');
+                        $description_api        = htmlspecialchars($news_item_api['description'] ?? 'Descrição indisponível.', ENT_QUOTES, 'UTF-8');
+                        
+                        if (mb_strlen($description_api, 'UTF-8') > 120) {
+                            $description_api = mb_substr($description_api, 0, 117, 'UTF-8') . '...';
+                        }
+                        
+                        $readText_api = addslashes(strip_tags(
+                            ($news_item_api['title'] ?? '') . ' — ' . ($news_item_api['description'] ?? '')
+                        ));
+                ?>
+                <article class="news-item" aria-labelledby="news-title-destaque-<?= $id_unico_destaque ?>">
+                    <div class="news-item-inner">
+                        <?php if ($imageUrl_api): ?>
+                            <div class="news-image-container">
+                                <img 
+                                    src="<?= $imageUrl_api ?>" 
+                                    alt="<?= $altText_api ?>" 
+                                    class="news-image"
+                                    loading="lazy"
+                                >
+                            </div>
                         <?php else: ?>
-                            <div class="news-image placeholder-image" role="img" aria-label="Imagem não disponível">
+                            <div class="placeholder-image" role="img" aria-label="Imagem não disponível">
                                 <span>Sem Imagem</span>
                             </div>
                         <?php endif; ?>
+                        
                         <div class="news-content">
-                             <h3 id="news-title-db-<?php echo $news_item['id']; ?>">
-                                <a href="<?php echo htmlspecialchars($news_item['url']); ?>" target="_blank" rel="noopener noreferrer">
-                                    <?php echo htmlspecialchars($news_item['title']); ?>
+                            <h3 id="news-title-destaque-<?= $id_unico_destaque ?>" class="news-title">
+                                <a href="<?= $url_api ?>" target="_blank" rel="noopener noreferrer">
+                                    <?= $title_api ?>
                                 </a>
                             </h3>
-                            <p class="news-meta">
-                                <span class="source"><?php echo htmlspecialchars($news_item['source_name']); ?></span> -
-                                <time datetime="<?php echo $news_item['published_at']; ?>">
-                                    <?php echo formatDate($news_item['published_at']); ?>
+                            
+                            <div class="news-meta">
+                                <span class="source"><?= $sourceName_api ?></span>
+                                <time datetime="<?= htmlspecialchars($publishedAtOriginal_api, ENT_QUOTES) ?>">
+                                    <?= $publishedAt_api ?>
                                 </time>
-                            </p>
-                            <p class="news-description">
-                                <?php echo htmlspecialchars(strip_tags($news_item['description'])); ?>
-                            </p>
-                            <a href="<?php echo htmlspecialchars($news_item['url']); ?>" target="_blank" rel="noopener noreferrer" class="read-more">
-                                Ler mais <span class="visually-hidden"> sobre <?php echo htmlspecialchars($news_item['title']); ?></span>
+                            </div>
+                            
+                            <p class="news-description"><?= $description_api ?></p>
+                            
+                            <div class="card-actions">
+                                <button
+                                    class="btn-read"
+                                    data-text="<?= $readText_api ?>"
+                                    aria-label="Ouvir notícia"
+                                    type="button"
+                                >
+                                    <span aria-hidden="true">🔊</span>
+                                </button>
+                                
+                                <form action="feedback.php" method="post">
+                                    <input type="hidden" name="image" value="<?= $imageUrl_api?>">
+                                    <input type="hidden" name="url" value="<?= $url_api ?>">
+                                    <input type="hidden" name="title" value="<?= $title_api ?>">
+                                    <input type="submit" value="Avaliar">
+                                </form>
+
+                                <a
+                                    href="<?= $url_api ?>"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn-link"
+                                >
+                                    Ler mais
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <?php
+                    endforeach;
+                else:
+                ?>
+                <div class="no-results">
+                    <p>Nenhuma notícia em destaque disponível no momento.</p>
+                    <p>Tente novamente mais tarde ou explore outras seções do portal.</p>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Categorias -->
+    <section class="categories-section" aria-labelledby="categories-heading">
+        <h2 id="categories-heading" class="section-title">
+            <span class="section-icon" aria-hidden="true">📋</span>
+            Categorias
+        </h2>
+        
+        <div class="categories-grid">
+            <a href="search.php?q=política" class="category-card">
+                <span class="category-icon" aria-hidden="true">🏛️</span>
+                <h3 class="category-title">Política</h3>
+            </a>
+            
+            <a href="search.php?q=economia" class="category-card">
+                <span class="category-icon" aria-hidden="true">💰</span>
+                <h3 class="category-title">Economia</h3>
+            </a>
+            
+            <a href="search.php?q=saúde" class="category-card">
+                <span class="category-icon" aria-hidden="true">🏥</span>
+                <h3 class="category-title">Saúde</h3>
+            </a>
+            
+            <a href="search.php?q=tecnologia" class="category-card">
+                <span class="category-icon" aria-hidden="true">💻</span>
+                <h3 class="category-title">Tecnologia</h3>
+            </a>
+            
+            <a href="search.php?q=esporte" class="category-card">
+                <span class="category-icon" aria-hidden="true">⚽</span>
+                <h3 class="category-title">Esportes</h3>
+            </a>
+            
+            <a href="search.php?q=entretenimento" class="category-card">
+                <span class="category-icon" aria-hidden="true">🎬</span>
+                <h3 class="category-title">Entretenimento</h3>
+            </a>
+        </div>
+    </section>
+
+    <!-- Seção de Últimas Notícias -->
+    <section class="latest-news-section" aria-labelledby="latest-news-heading">
+        <h2 id="latest-news-heading" class="section-title">
+            <span class="section-icon" aria-hidden="true">📰</span>
+            Últimas Notícias
+        </h2>
+        
+        <div class="news-grid">
+            <?php
+            $general_news = getNewsFromDB($conn, 9, 0, null, 'pt');
+            if (!empty($general_news)):
+                foreach ($general_news as $news_item):
+                    $id_db        = $news_item['id'];
+                    $title_db     = htmlspecialchars($news_item['title'], ENT_QUOTES);
+                    $url_db       = htmlspecialchars($news_item['url'], ENT_QUOTES);
+                    $img_db       = htmlspecialchars($news_item['image_url'] ?? '', ENT_QUOTES);
+                    $alt_db       = generateAltText($news_item['title']);
+                    $source_db    = htmlspecialchars($news_item['source_name'] ?? 'Fonte desconhecida', ENT_QUOTES);
+                    $pub_iso_db   = $news_item['published_at'];
+                    $pub_db       = $pub_iso_db ? formatDate($pub_iso_db) : 'Data indisponível';
+                    $desc_db      = htmlspecialchars(strip_tags($news_item['description']), ENT_QUOTES);
+                    $readText_db  = addslashes(strip_tags($news_item['title'] . ' — ' . $news_item['description']));
+            ?>
+            <article class="news-item" aria-labelledby="news-title-db-<?= $id_db ?>">
+                <div class="news-item-inner">
+                    <?php if ($img_db): ?>
+                        <div class="news-image-container">
+                            <img 
+                                src="<?= $img_db ?>" 
+                                alt="<?= $alt_db ?>" 
+                                class="news-image"
+                                loading="lazy"
+                            >
+                        </div>
+                    <?php else: ?>
+                        <div class="placeholder-image" role="img" aria-label="Imagem não disponível">
+                            <span>Sem Imagem</span>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="news-content">
+                        <h3 id="news-title-db-<?= $id_db ?>" class="news-title">
+                            <a href="<?= $url_db ?>" target="_blank" rel="noopener noreferrer">
+                                <?= $title_db ?>
+                            </a>
+                        </h3>
+                        
+                        <div class="news-meta">
+                            <span class="source"><?= $source_db ?></span>
+                            <time datetime="<?= htmlspecialchars($pub_iso_db, ENT_QUOTES) ?>">
+                                <?= $pub_db ?>
+                            </time>
+                        </div>
+                        
+                        <p class="news-description"><?= $desc_db ?></p>
+                        
+                        <div class="card-actions">
+                            <button
+                                class="btn-read"
+                                data-text="<?= $readText_db ?>"
+                                aria-label="Ouvir notícia"
+                                type="button"
+                            >
+                                <span aria-hidden="true">🔊</span>
+                            </button>
+                            
+                            <form action="feedback.php" method="get">
+                                <input type="hidden" name="image" value="<?= $img_db?>">
+                                <input type="hidden" name="url" value="<?= $url_db ?>">
+                                <input type="hidden" name="title" value="<?= $title_db ?>">
+                                <input type="submit" value="Avaliar">
+                            </form>
+
+                            <a
+                                href="<?= $url_db ?>"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn-link"
+                            >
+                                Ler mais
                             </a>
                         </div>
-                    </article>
+                    </div>
+                </div>
+            </article>
             <?php
-                }
-            } else {
-                 echo "<p>Nenhuma notícia encontrada no banco de dados. Tente atualizar as notícias através do script apropriado.</p>";
-            }
-            insert_feedback($conn, 64, 5);
+                endforeach;
+            else:
             ?>
+            <div class="no-results">
+                <p>Nenhuma notícia encontrada no banco de dados.</p>
+                <p>Tente novamente mais tarde ou explore outras seções do portal.</p>
+            </div>
+            <?php endif; ?>
         </div>
-        </section>
-
+    </section>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php
+require_once __DIR__ . '/includes/footer.php';
+?>
+

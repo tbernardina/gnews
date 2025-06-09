@@ -79,86 +79,86 @@ function fetchArticlesFromGNews($query = null, $lang = 'pt', $max = 10) {
     }
 }
 
-/**
- * Salva um artigo no banco de dados se ele não existir.
- * (Função como fornecida e corrigida anteriormente)
- */
-function saveArticleToDB(mysqli $conn, array $article, string $lang = 'pt') {
-    if (!isset($article['url'], $article['title'], $article['publishedAt'], $article['source']['name'])) {
-        error_log("Artigo com dados incompletos não pode ser salvo: " . print_r($article, true));
-        return false;
+function select_id_url($conexao, $url){
+    // 1) Prepara a chamada da procedure
+    $sql = "CALL select_id(?)";
+    if (! $stmt = $conexao->prepare($sql)) {
+        // erro ao preparar
+        return null;
     }
-    $stmt_check = $conn->prepare("SELECT id FROM noticias WHERE url = ?");
-    if (!$stmt_check) {
-        error_log("Erro ao preparar select (verificação de duplicata): " . $conn->error);
-        return false;
+
+    // 2) Faz o bind do parâmetro e executa
+    $stmt->bind_param('s', $url);
+    if (! $stmt->execute()) {
+        $stmt->close();
+        return null;
     }
-    $stmt_check->bind_param("s", $article['url']);
-    $stmt_check->execute();
-    $stmt_check->store_result();
-    if ($stmt_check->num_rows > 0) {
-        $stmt_check->close();
-        return true;
+
+    // 3) Associa o resultado à variável $id
+    $id = null;
+    $stmt->bind_result($id);
+
+    // 4) Busca o resultado
+    if ($stmt->fetch()) {
+        $stmt->close();
+
+        // 5) Limpa quaisquer resultados adicionais gerados pela procedure
+        while ($conexao->more_results() && $conexao->next_result()) {
+            // apenas avançamos nos conjuntos de resultados
+        }
+
+        return $id;
     }
-    $stmt_check->close();
-    $stmt_insert = $conn->prepare("INSERT INTO noticias (title, description, content, url, image_url, published_at, source_name, source_url, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    if (!$stmt_insert) {
-        error_log("Erro ao preparar insert: " . $conn->error);
-        return false;
-    }
-    $content = !empty($article['content']) ? $article['content'] : ($article['description'] ?? 'Conteúdo não disponível.');
-    $description = !empty($article['description']) ? $article['description'] : (substr(strip_tags($content), 0, 250) . (strlen(strip_tags($content)) > 250 ? '...' : ''));
-    $imageUrl = $article['image'] ?? null;
-    $sourceUrl = $article['source']['url'] ?? null;
-    try {
-        $published_at_dt = new DateTime($article['publishedAt'], new DateTimeZone('UTC'));
-        $published_at_dt->setTimezone(new DateTimeZone('America/Sao_Paulo'));
-        $published_at_formatted = $published_at_dt->format('Y-m-d H:i:s');
-    } catch (Exception $e) {
-        error_log("Erro ao formatar data de publicação: " . $e->getMessage() . " - Data original: " . $article['publishedAt']);
-        $published_at_formatted = date('Y-m-d H:i:s');
-    }
-    $stmt_insert->bind_param("sssssssss", $article['title'], $description, $content, $article['url'], $imageUrl, $published_at_formatted, $article['source']['name'], $sourceUrl, $lang);
-    if ($stmt_insert->execute()) {
-        $stmt_insert->close();
-        return true;
-    } else {
-        error_log("Erro ao salvar artigo: " . $stmt_insert->error . " - URL: " . $article['url']);
-        $stmt_insert->close();
-        return false;
-    }
+
+    // 6) Se não veio linha, fecha e retorna null
+    $stmt->close();
+    return null;
 }
 
-function insert_feedback($conexao, $id_noticia, $nota){
+function insert_feedback($conexao, $id_noticia, $nota, $comment){
+    header('Content-Type: application/json; charset=UTF-8');
+
     $noticias_id   = $id_noticia;
     $nota_feedback = $nota;
     $ip_user       = getClientIp();
+    $comentario    = $comment;
 
-    $sql2 = "CALL inserir_feedback(?, ?, ?)";
-    $stmt2 = $conexao->prepare($sql2);
-
-    if ( ! $stmt2 ) {
-        die("Falha ao preparar inserir_feedback: ({$conexao->errno}) {$conexao->error}");
+    $check_ip = "SELECT IP_USER FROM feedbacks WHERE NOTICIAS_ID = ?";
+    $stmt = $conexao->prepare($check_ip);
+    $stmt->bind_param("i", $id_noticia);
+    $stmt->execute();
+    $stmt->store_result();
+    if ($stmt->num_rows > 0) {  
+        // já existe um registro com esse NOTICIAS_ID
+        $stmt->close();
+        $conexao->close();
+        echo json_encode(['success' => true]);
     }
+    else{
+        $sql2 = "CALL inserir_feedback(?, ?, ?, ?)";
+        $stmt2 = $conexao->prepare($sql2);
 
-    // Bind: 3 inteiros e 1 string (ip_user)
-    $stmt2->bind_param(
-        "iis",
-        $noticias_id,
-        $nota_feedback,
-        $ip_user
-    );
+        if ( ! $stmt2 ) {
+            die("Falha ao preparar inserir_feedback: ({$conexao->errno}) {$conexao->error}");
+        }
 
-    if ( ! $stmt2->execute() ) {
-        echo "Erro ao executar inserir_feedback: ({$stmt2->errno}) {$stmt2->error}";
-    } else {
-        echo "Feedback inserido com sucesso!";
+        // Bind: 3 inteiros e 1 string (ip_user)
+        $stmt2->bind_param(
+            "iiss",
+            $noticias_id,
+            $nota_feedback,
+            $ip_user,
+            $comentario
+        );
+
+        if ( ! $stmt2->execute() ) {
+            echo "Erro ao executar inserir_feedback: ({$stmt2->errno}) {$stmt2->error}";
+        } else {
+            $stmt2->close();
+            $conexao->close();
+            echo json_encode(['success' => true]);
+        }
     }
-
-    $stmt2->close();
-
-    // 8. Fecha a conexão
-    $conexao->close();
 }
 
 /**
@@ -209,10 +209,10 @@ function getNewsFromDB(mysqli $conn, int $limit = 10, int $offset = 0, string $s
 }
 
 // Valores que você quer inserir/atualizar
-function insert_noticias($conexao, $titulo, $descricao, $content, $url_db, $image_url_db, $published_at_db, $source_name_db, $source_url_db){
+function insert_noticias($conexao, $titulo, $descricao, $content_db, $url_db, $image_url_db, $published_at_db, $source_name_db, $source_url_db){
     $title        = $titulo;
     $description  = $descricao;
-    $content      = $content;
+    $content      = $content_db;
     $url          = $url_db;
     $image_url    = $image_url_db;
     $published_at = $published_at_db;

@@ -1,36 +1,12 @@
 <?php
-require_once 'untils.php';
-
-function insert_feedback($conexao, $id_noticia, $nota){
-    $noticias_id   = $id_noticia;
-    $nota_feedback = $nota;
-    $ip_user       = getClientIp();
-
-    $sql2 = "CALL inserir_feedback(?, ?, ?)";
-    $stmt2 = $conexao->prepare($sql2);
-
-    if ( ! $stmt2 ) {
-        die("Falha ao preparar inserir_feedback: ({$conexao->errno}) {$conexao->error}");
+require_once __DIR__  . '\includes\functions.php';
+require_once 'db_config.php';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $url = $_POST['article_url'];
+        $nota_feedback = $_POST['rating'];
+        $comentario = $_POST['comment'];
     }
 
-    // Bind: 3 inteiros e 1 string (ip_user)
-    $stmt2->bind_param(
-        "iis",
-        $noticias_id,
-        $nota_feedback,
-        $ip_user
-    );
+    $id = select_id_url($conn,$url);
+    insert_feedback($conn, $id, $nota_feedback, $comentario);
 
-    if ( ! $stmt2->execute() ) {
-        echo "Erro ao executar inserir_feedback: ({$stmt2->errno}) {$stmt2->error}";
-    } else {
-        echo "Feedback inserido com sucesso!";
-    }
-
-    $stmt2->close();
-
-    // 8. Fecha a conexão
-    $conexao->close();
-}
-?>
-?>
